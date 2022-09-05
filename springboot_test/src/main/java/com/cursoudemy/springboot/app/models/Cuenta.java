@@ -2,10 +2,15 @@ package com.cursoudemy.springboot.app.models;
 
 import com.cursoudemy.springboot.app.exceptions.SaldoInsuficienteException;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+@Entity
+@Table(name = "cuentas")
 public class Cuenta {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
     private BigDecimal saldo;
