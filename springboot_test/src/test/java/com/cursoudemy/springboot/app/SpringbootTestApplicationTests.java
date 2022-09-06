@@ -13,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.cursoudemy.springboot.app.Datos.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,15 +48,15 @@ class SpringbootTestApplicationTests {
 
         BigDecimal saldoOrigen = service.revisarSaldo(1L);
         BigDecimal saldoDestino = service.revisarSaldo(2L);
-        assertEquals("1000.123", saldoOrigen.toPlainString());
-        assertEquals("2000.123", saldoDestino.toPlainString());
+        assertEquals("1000.12", saldoOrigen.toPlainString());
+        assertEquals("2000.12", saldoDestino.toPlainString());
 
         service.transferir(1L, 2L, new BigDecimal("100"), 1L);
 
         saldoOrigen = service.revisarSaldo(1L);
         saldoDestino = service.revisarSaldo(2L);
-        assertEquals("900.123", saldoOrigen.toPlainString());
-        assertEquals("2100.123", saldoDestino.toPlainString());
+        assertEquals("900.12", saldoOrigen.toPlainString());
+        assertEquals("2100.12", saldoDestino.toPlainString());
 
         int total = service.revisarTotalTransferencias(1L);
         assertEquals(1, total);
@@ -77,15 +79,15 @@ class SpringbootTestApplicationTests {
 
         BigDecimal saldoOrigen = service.revisarSaldo(1L);
         BigDecimal saldoDestino = service.revisarSaldo(2L);
-        assertEquals("1000.123", saldoOrigen.toPlainString());
-        assertEquals("2000.123", saldoDestino.toPlainString());
+        assertEquals("1000.12", saldoOrigen.toPlainString());
+        assertEquals("2000.12", saldoDestino.toPlainString());
 
         assertThrows(SaldoInsuficienteException.class, () -> {
             service.transferir(1L, 2L, new BigDecimal("1300"), 1L);
         });
 
-        assertEquals("1000.123", saldoOrigen.toPlainString());
-        assertEquals("2000.123", saldoDestino.toPlainString());
+        assertEquals("1000.12", saldoOrigen.toPlainString());
+        assertEquals("2000.12", saldoDestino.toPlainString());
 
         int total = service.revisarTotalTransferencias(1L);
         assertEquals(0, total);
@@ -112,5 +114,43 @@ class SpringbootTestApplicationTests {
         assertEquals("Daniel", cuenta1.getNombre());
         assertEquals("Daniel", cuenta2.getNombre());
         verify(cuentaRepository, times(2)).findById(1L);
+    }
+
+    @Test
+    void testFindAll() {
+        //  Given
+        List<Cuenta> datos = Arrays.asList(crearCuenta001().orElseThrow(), crearCuenta002().orElseThrow());
+        when(cuentaRepository.findAll()).thenReturn(datos);
+
+        //  When
+        List<Cuenta> cuentas = service.findAll();
+
+        //  Then
+        assertFalse(cuentas.isEmpty());
+        assertEquals(2, cuentas.size());
+        assertTrue(cuentas.contains(crearCuenta002().orElseThrow()));
+
+        verify(cuentaRepository).findAll();
+    }
+
+    @Test
+    void testSave() {
+        //  Given
+        Cuenta dato = new Cuenta(null, "Jose", new BigDecimal("3000.12"));
+        when(cuentaRepository.save(any())).then(invocationOnMock -> {
+            Cuenta c = invocationOnMock.getArgument(0);
+            c.setId(3L);
+            return c;
+        });
+
+        //  When
+        Cuenta cuenta = service.save(dato);
+
+        //  Then
+        assertEquals("Jose", cuenta.getNombre());
+        assertEquals(3, cuenta.getId());
+        assertEquals("3000.12", cuenta.getSaldo().toPlainString());
+
+        verify(cuentaRepository).save(any());
     }
 }

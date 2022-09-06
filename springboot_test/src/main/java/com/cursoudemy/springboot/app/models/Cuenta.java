@@ -73,5 +73,12 @@ public class Cuenta {
         return Objects.hash(id, nombre, saldo);
     }
 
-
+    @Override
+    public String toString() {
+        return "Cuenta{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", saldo=" + saldo +
+                '}';
+    }
 }

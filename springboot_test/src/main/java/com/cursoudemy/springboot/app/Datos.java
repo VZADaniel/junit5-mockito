@@ -12,11 +12,11 @@ public class Datos {
 //    public static final Banco BANCO = new Banco(1L, "Banco Financiero", 0);
 
     public static Optional<Cuenta> crearCuenta001() {
-        return Optional.of(new Cuenta(1L, "Daniel", new BigDecimal("1000.123")));
+        return Optional.of(new Cuenta(1L, "Daniel", new BigDecimal("1000.12")));
     }
 
     public static Optional<Cuenta> crearCuenta002() {
-        return Optional.of(new Cuenta(2L, "Carlos", new BigDecimal("2000.123")));
+        return Optional.of(new Cuenta(2L, "Carlos", new BigDecimal("2000.12")));
     }
 
     public static Optional<Banco> crearBanco() {
